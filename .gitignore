@@ -1,0 +1,5 @@
+database/poicraft.db
+venv
+Scripts
+config.py
+*.pyc
