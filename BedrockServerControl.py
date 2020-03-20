@@ -1,6 +1,9 @@
 import socket
 import subprocess
+import sys
 import threading
+import time
+
 import config
 
 # 管道开服
@@ -11,13 +14,19 @@ run = subprocess.Popen(config.BEDROCKSERVEREXE,
                        shell=True,
                        universal_newlines=True)
 
-
 #   打印在屏幕上营造出一个控制台的假象
 def OutputStartInfo():
-    while True:
-        OutputStartInfo = run.stdout.readline().strip()
-        if None != OutputStartInfo:
-            print(OutputStartInfo)
+    try:
+        while True:
+            OutputStartInfo = run.stdout.readline().strip()
+            if OutputStartInfo == '':
+                print('检查bedrock_server.exe路径是否错误')
+                sys.exit()
+            if None != OutputStartInfo:
+                print(OutputStartInfo)
+    except:
+        print('服务器错误，直接关闭软件再试试吧')
+        exit()
 
 
 def ListenConsoleCommand():
