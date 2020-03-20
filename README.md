@@ -1,7 +1,11 @@
-# BDS_QQControl
+# PoiQQBot
+
+一个允许玩家和管理员通过 QQ 对 Bedrock 服务器进行操作的简易机器人.
+
 ## 如何使用
-* 使用了酷Q的webapi插件，安装方法参阅https://cqhttp.cc/
-* 使用了nonebot，请先安装pip install -r requirements.txt，更多api参阅https://nonebot.cqp.moe/api.html
+
+* 使用了酷Q的 webapi 插件，安装方法参阅 <https://cqhttp.cc/>
+* 使用了 nonebot ,请先运行 `pip install -r requirements.txt` 安装依赖. 更多api参阅 <https://nonebot.cqp.moe/api.html>
 
 ## 需要修改的地方
 * 酷Q安装目录/data/app/io.github.richardchien.coolqhttpapi\config\xxxxxx.json\  
