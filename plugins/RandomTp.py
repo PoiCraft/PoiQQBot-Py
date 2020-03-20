@@ -12,7 +12,7 @@ __plugin_usage__ = r"""随机传送
 import config
 
 
-@on_command('RandomTp', aliases=('rtp', '随机传送'), only_to_me=False)
+@on_command('rtp', aliases='随机传送', only_to_me=False)
 async def RandomTp(session: CommandSession):
     # 查数据库
     def FindSql(SqlCommand):
@@ -45,11 +45,11 @@ async def RandomTp(session: CommandSession):
             print("连接到服务器")
         except:  # 连接不成功
             await session.send('[CQ:at,qq={0}]服务端可能没有开启嗷，稍后再试试吧'.format(SenderQQNumber))
-            exit()
 
         sc.send(bytes('effect %s resistance 15 5 true' % GamerName, encoding='utf-8'))
         print("给予玩家防摔死buff*15s")
-        time.sleep(0.1)
+        print(bytes('tp %s %s 100 %s' % (GamerName, x, z), encoding='utf-8'))
+        time.sleep(0.3)
         sc.send(bytes('tp %s %s 100 %s' % (GamerName, x, z), encoding='utf-8'))
         await session.send('%s-->%s,100,%s' % (GamerName, x, z))
         print('%s-->%s,100,%s' % (GamerName, x, z))
