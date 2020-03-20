@@ -25,7 +25,7 @@ class Player:
 
     def __add(self):
         cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName) VALUES (\'%s\', \'%s\')' %(self.__qq, self.__id))
-        cursor.commit()
+        db.commit()
 
     def __get(self,key,value):
         cursor.execute('select * from GameToQQData where %s=\'%s\''%(key,value))
@@ -41,7 +41,6 @@ class Player:
         else:
             self.__get("GamerName",self.__id)
         if (self.__qq and self.__id):
-            print('jecjejjf')
             if len(self.__result) == 0:
                 self.__add()
             else:
