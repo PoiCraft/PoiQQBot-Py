@@ -1,7 +1,7 @@
 # BDS_QQControl
 ## 如何使用
 * 使用了酷Q的webapi插件，安装方法参阅https://cqhttp.cc/
-* 使用了nonebot，请先安装pip install -r requirements.txt，更多api参阅https://nonebot.cqp.moe/api.html
+* 使用了nonebot，请先`pip install -r requirements.txt`，更多api参阅https://nonebot.cqp.moe/api.html
 
 ## 需要修改的地方
 * 酷Q安装目录/data/app/io.github.richardchien.coolqhttpapi\config\xxxxxx.json\  
