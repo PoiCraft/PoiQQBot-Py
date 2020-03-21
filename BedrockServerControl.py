@@ -1,73 +1,77 @@
-import socket
-import subprocess
+import os
+import re
 import sys
-import threading
 import time
-
 import config
+import asyncio
+import threading
+import subprocess
+import websockets
 
-# 管道开服
-run = subprocess.Popen(config.BEDROCKSERVEREXE,
-                       stderr=subprocess.PIPE,
-                       stdin=subprocess.PIPE,
-                       stdout=subprocess.PIPE,
-                       shell=True,
-                       universal_newlines=True)
-
-#   打印在屏幕上营造出一个控制台的假象
-def OutputStartInfo():
-    try:
-        while True:
-            OutputStartInfo = run.stdout.readline().strip()
-            if OutputStartInfo == '':
-                print('检查bedrock_server.exe路径是否错误')
-                sys.exit()
-            if None != OutputStartInfo:
-                print(OutputStartInfo)
-    except:
-        print('服务器错误，直接关闭软件再试试吧')
-        exit()
+SendInfo = 'None'  # 线程里面的东西返回值
+ServerRun = subprocess.Popen(config.BEDROCKSERVEREXE,
+                             shell=True,
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             universal_newlines=True)
 
 
+# 让用户以为这真的是一个控制台(Doge)
+def OutputInfo():
+    while True:
+        time.sleep(0.2)
+        Info = ServerRun.stdout.readline().strip()
+        global SendInfo
+        SendInfo = Info  # 传出去
+        if Info == '':
+            print('服务器异常结束，即将重启')
+            RestartServer()
+        elif Info is not None and Info != 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+            print('--->', Info)
+
+
+# 用户输入，不然控制台是模拟不完整的！
 def ListenConsoleCommand():
     while True:
         command = input("> ")
-        run.stdin.write('{0}\n'.format(command))
-        run.stdin.flush()
+        ServerRun.stdin.write('{0}\n'.format(command))
+        ServerRun.stdin.flush()
 
 
-threading.Thread(target=OutputStartInfo).start()
 threading.Thread(target=ListenConsoleCommand).start()
+threading.Thread(target=OutputInfo).start()
 
-while True:
-    try:
-        # 接收客户端连接
-        s = socket.socket()
-        s.bind(('127.0.0.1', 30000))
-        s.listen(5)
-        print('等待连接....')
-        client, address = s.accept()
-        print('连接成功')
-        while True:
-            try:
-                try:
-                    msg = client.recv(1024)
-                except:
-                    break
-                if msg == b'EOF':
-                    client.close()
-                    break
-                if msg == b'quit':
-                    client.close()
-                    break
-                if msg == b'':
-                    client.close()
-                    break
-                print('服务端接收并尝试执行:', msg.decode('utf-8'))
-                run.stdin.write(str(msg, encoding=('utf-8')) + '\n')
-                run.stdin.flush()
-                client.send()
-            except:
-                break
-    except:
-        continue
+
+# 重启服务器
+def RestartServer():
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
+
+# ws部分
+async def ExecCommand(websocket: object, path: object) -> object:
+    while True:
+        Command = await websocket.recv()
+        print('服务器收到并执行---> ', Command)
+        time.sleep(0.1)
+        ServerRun.stdin.write(Command + '\n')
+        ServerRun.stdin.flush()
+        time.sleep(0.1)
+        if SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+            print('Success')
+            await websocket.send('Success')
+        elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
+            print('Success')
+            await websocket.send('Success')
+        else:
+            await websocket.send(SendInfo)
+        ServerRun.stdin.write('' + '\n')
+        ServerRun.stdin.flush()
+
+
+StartWsServer = websockets.serve(ExecCommand, '127.0.0.1', 30000)
+asyncio.get_event_loop().run_until_complete(StartWsServer)
+asyncio.get_event_loop().run_forever()
+time.sleep(6)
+ServerRun.stdin.write('' + '\n')
+ServerRun.stdin.flush()
