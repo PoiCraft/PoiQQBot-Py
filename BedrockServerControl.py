@@ -10,7 +10,7 @@ import websockets
 
 SendInfo = 'None'  # 线程里面的东西返回值
 ServerRun = subprocess.Popen(config.BEDROCKSERVEREXE,
-                             shell=True,
+                             shell=False,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
                              universal_newlines=True)
@@ -26,6 +26,9 @@ def OutputInfo():
         if Info == '':
             print('服务器异常结束，即将重启')
             RestartServer()
+        elif Info == 'Quit correctly':
+            print('已经结束运行了，关掉窗口即可')
+            raise SystemExit
         elif Info is not None and Info != 'Unknown command: . Please check that the command exists and that you have permission to use it.':
             print('--->', Info)
 
