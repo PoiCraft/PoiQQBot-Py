@@ -3,3 +3,4 @@ venv
 Scripts
 config.py
 *.pyc
+*.db

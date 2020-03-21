@@ -31,6 +31,14 @@ class Player:
         cursor.execute('select * from GameToQQData where %s=\'%s\''%(key,value))
         self.__result = cursor.fetchall()
 
+    def __del(self,key,value):
+        cursor.execute('delete from GameToQQData where %s=\'%s\''%(key,value))
+        db.commit()
+
+    def __list():
+        cursor.execute('select * from GameToQQData')
+        return cursor.fetchall()
+
     def __init__(self,QQNumber:str=None,GamerName:str=None):
         if (QQNumber == None and GamerName == None):
             raise self.MissingParameterException("请提供 QQ 号或 Xbox ID 中的至少一个参数")
@@ -50,6 +58,16 @@ class Player:
             self.__id = self.__result[0][1]
         else:
             raise self.PlayerNotFoundException('无法找到此玩家')
+
+    def remove(self):
+        if (self.__qq is not None):
+            self.__del("QQNumber",self.__qq)
+        else:                                                    self.__del("GamerName",self.__id)
+
+    def list():
+        cursor.execute('select * from GameToQQData')
+        palyers = cursor.fetchall()
+        return [{'qq':v[0],'id':v[1]} for v in palyers]
 
     def QQNumber(self):
         return self.__qq
