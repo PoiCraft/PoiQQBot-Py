@@ -41,8 +41,7 @@ def ListenConsoleCommand():
         ServerRun.stdin.flush()
 
 
-ListenThread = threading.Thread(target=ListenConsoleCommand)
-ListenThread.start()
+threading.Thread(target=ListenConsoleCommand).start()
 threading.Thread(target=OutputInfo).start()
 
 
