@@ -62,7 +62,8 @@ class Player:
     def remove(self):
         if (self.__qq is not None):
             self.__del("QQNumber",self.__qq)
-        else:                                                    self.__del("GamerName",self.__id)
+        else:
+            self.__del("GamerName",self.__id)
 
     def list():
         cursor.execute('select * from GameToQQData')
