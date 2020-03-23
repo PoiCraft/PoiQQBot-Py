@@ -10,21 +10,44 @@
         padding: 0;
         border: 0;
         outline: 0;
+        background-color: black;
+        color: white;
       }
     #console {
         overflow:hidden;
         width:100%
         height:100vh;
     }
+    .name{
+        color: Gainsboro;
+        width: 80px; 
+        text-align: right;
+    }
+    .name_cmd{
+        background-color: DodgerBlue;
+    }
+    .value{
+        width:calc(100% - 80px);
+    }
+    .err{
+        color: red; 
+    }
+    .ok {
+        color: LawnGreen;
+    }
+    body{
+        padding: 5px;
+    }
     </style>
   </head>
   <body>
     <div id="console">
+    <p>欢迎使用 PoiQQBot WebControl</p>
     <div id="re">
     </div>
     <div id="inp">
-    <small style="float: left; height: 34px; width: 80px; line-height: 34px;text-align: right">PoiQQBot></small>
-    <input id="cmd" style="width:calc(100% - 80px);resize:none; height: 34px; float: left">
+    <small class="name name_cmd">PoiQQBot></small>
+    <input id="cmd" class="value" style="">
     </div>
     </div>
     <script>
@@ -35,9 +58,18 @@
     var inp = document.getElementById("inp")
     
     var ws = new WebSocket("ws://127.0.0.1:30000")
+    
+    ws.onopen = function(){
+        _c = document.createElement("p")
+        _c.innerHTML="<strong class='ok'>->连接已建立<-</strong>"
+        re.appendChild(_c)
+        inp.style.display="block"
+        cmd.focus()
+    }
+    
     ws.onmessage = function(e){
         _c = document.createElement("p")
-        _c.innerHTML="<small>"+e.data+"</small>"
+        _c.innerHTML="<small><span class='name'>--></span><span class='value'>"+e.data+"</span></small>"
         re.appendChild(_c)
         inp.style.display="block"
         cmd.focus()
@@ -46,7 +78,13 @@
     ws.onerror = function(){
         inp.style.display="none"
         _c = document.createElement("p")
-        _c.innerHTML="<strong>连接断了</strong>"
+        _c.innerHTML="<strong class='err'>->连接出现问题<-</strong>"
+        re.appendChild(_c)
+    }
+    ws.oncolsed = function(){
+        inp.style.display="none"
+        _c = document.createElement("p")
+        _c.innerHTML="<strong class='err'>->连接已断开<-</strong>"
         re.appendChild(_c)
     }
     cmd.focus()
@@ -56,7 +94,7 @@
         
         if (keycode == 13) {
         _c = document.createElement("p")
-        _c.innerHTML="<small>PoiQQBot>"+cmd.value+"</small>"
+        _c.innerHTML="<small><span class='name name_cmd'>PoiQQBot></span> <span class='value'>"+cmd.value+"</span></small>"
         re.appendChild(_c)
         ws.send(cmd.value)
         cmd.value=""
