@@ -9,6 +9,9 @@ import subprocess
 import websockets
 
 SendInfo = 'None'  # 线程里面的东西返回值
+InputCommand = ''  # 判断输入命令的玩意
+OtherCommandReturn = ''  # 特殊命令返回值
+SpecialCommand = ['list', 'listd']  # 特殊命令
 ServerRun = subprocess.Popen(config.BEDROCKSERVEREXE,
                              shell=False,
                              stdin=subprocess.PIPE,
@@ -19,13 +22,23 @@ ServerRun = subprocess.Popen(config.BEDROCKSERVEREXE,
 # 让用户以为这真的是一个控制台(Doge)
 def OutputInfo():
     while True:
+        global OtherCommandReturn
         time.sleep(0.2)
         Info = ServerRun.stdout.readline().strip()
         global SendInfo
         SendInfo = Info  # 传出去
-        if Info == '':
+        if Info == '' and (InputCommand not in SpecialCommand):
             print('服务器异常结束，即将重启')
             RestartServer()
+        elif re.search('Running AutoCompaction', Info):
+            pass
+        elif Info == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+            print('清空特殊返回值')
+            OtherCommandReturn = ''
+        elif InputCommand == 'list' or InputCommand == 'listd':
+            print('收到特殊指令:', InputCommand)
+            OtherCommandReturn += Info + '\n'
+            print('--->', Info)
         elif Info == 'Quit correctly':
             print('已经结束运行了，关掉窗口即可')
             raise SystemExit
@@ -54,13 +67,18 @@ def RestartServer():
 # ws部分
 async def ExecCommand(websocket: object, path: object) -> object:
     while True:
+        global InputCommand
         Command = await websocket.recv()
+        InputCommand = Command.split(' ')[0]
         print('服务器收到并执行---> ', Command)
         time.sleep(0.1)
         ServerRun.stdin.write(Command + '\n')
         ServerRun.stdin.flush()
         time.sleep(0.1)
-        if SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+        if InputCommand == 'list':
+            time.sleep(1.5)
+            await websocket.send(OtherCommandReturn)
+        elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
             print('Success')
             await websocket.send('Success')
         elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
