@@ -93,6 +93,7 @@ class Player:
     def addTpCount(self,t_max=3):
         if self.__c < t_max:
             self.__limit_tp(self.__c + 1)
+            return self.__c
         else:
             raise self.ToMuchTpException("过多的TP")
 
