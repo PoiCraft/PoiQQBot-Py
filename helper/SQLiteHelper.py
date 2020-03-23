@@ -22,9 +22,14 @@ class Player:
     class PlayerNotFoundException(Error):
         "玩家不存在"
         pass
+    class ToMuchTpException(Error):
+        "TP 次数过多"
+    pass
+
+    __c = 0
 
     def __add(self):
-        cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName) VALUES (\'%s\', \'%s\')' %(self.__qq, self.__id))
+        cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName ,UseNumber) VALUES (\'%s\', \'%s\',0)' %(self.__qq, self.__id))
         db.commit()
 
     def __get(self,key,value):
@@ -34,6 +39,11 @@ class Player:
     def __del(self,key,value):
         cursor.execute('delete from GameToQQData where %s=\'%s\''%(key,value))
         db.commit()
+
+    def __limit_tp(self,i):
+        cursor.execute(f'update GameToQQData set UseNumber = {i} where QQNumber = \'{self.__qq}\'')
+        db.commit()
+        self.__init__(self.__qq)
 
     def __list():
         cursor.execute('select * from GameToQQData')
@@ -56,6 +66,7 @@ class Player:
         elif len(self.__result) == 1:
             self.__qq = self.__result[0][0]
             self.__id = self.__result[0][1]
+            self.__c = int(self.__result[0][2])
         else:
             raise self.PlayerNotFoundException('无法找到此玩家')
 
@@ -76,11 +87,28 @@ class Player:
     def GamerName(self):
         return self.__id
 
+    def cleanTpCount(self):
+        self.__limit_tp(0)
+
+    def addTpCount(self,t_max=3):
+        if self.__c < t_max:
+            self.__limit_tp(self.__c + 1)
+            return self.__c
+        else:
+            raise self.ToMuchTpException("过多的TP")
+
+
+    def TpCount(self):
+        return self.__c
+
     def __str__(self):
         return self.__id
 
     def __int__(self):
         return int(self.__qq)
+
+    def __repr__(self):
+        return 'Player<qq=%s,id=%s,tp=%s>'%(self.__qq,self.__id,self.__c)
 
 
 
