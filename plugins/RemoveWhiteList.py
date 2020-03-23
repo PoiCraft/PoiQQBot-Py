@@ -1,5 +1,7 @@
-import socket
+import time
 
+from websocket import create_connection
+import Test.test as sc
 from nonebot import on_command, CommandSession, permission
 
 __plugin_name__ = '删除白名单'
@@ -15,15 +17,18 @@ async def Bind(session: CommandSession):
     if not SenderGamerName:
         await session.send('[CQ:at,qq={0}]#rmw后面必须跟上游戏ID嗷，例：/addw HelloWorld'.format(SenderQQNumber))
     else:
-        sc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # socket连接
-        host = '127.0.0.1'  # socket地址
-        port = 30000  # socket端口
         try:
-            sc.connect((host, port))
-        except:  # 连接不成功
-            await session.send('[CQ:at,qq={0}]服务端可能没有开启嗷，稍后再试试吧'.format(SenderQQNumber))
-        try:
-            sc.send(bytes('whitelist remove %s' % SenderGamerName, encoding='utf-8'))
-            await session.send('Success')
+            ws = create_connection("ws://127.0.0.1:30000")
         except:
-            await session.send('Failed')
+            await session.send('[CQ:at,qq={0}] 服务器去火星了,等会儿再试试吧'.format(SenderQQNumber))
+        ws.send(('whitelist remove %s' % SenderGamerName))
+        time.sleep(0.2)
+        result = ws.recv()
+        if result == 'Success':
+            result = ws.recv()
+            await session.send(result)  # 没啥用,多获取一次,一个奇怪的bug
+        else:
+            if result == "Player removed from whitelist":
+                await session.send('[CQ:at,qq=%s] %s已经从Poicraft的白名单中消失了呢!' % (SenderQQNumber, SenderGamerName))
+            else:
+                await session.send('[CQ:at,qq=%s] Poicraft的白名单并找不到%s呢!' % (SenderQQNumber, SenderGamerName))
