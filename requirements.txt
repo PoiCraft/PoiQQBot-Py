@@ -27,3 +27,4 @@ urllib3==1.25.8
 websockets==8.1
 Werkzeug==1.0.0
 wsproto==0.15.0
+websocket_client == 0.57.0
