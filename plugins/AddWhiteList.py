@@ -1,6 +1,6 @@
 import time
 from websocket import create_connection
-from nonebot import on_command, CommandSession
+from nonebot import on_command, CommandSession,permission
 
 __plugin_name__ = '添加白名单'
 __plugin_usage__ = r"""添加白名单(仅管理及群主可用)
@@ -8,7 +8,7 @@ __plugin_usage__ = r"""添加白名单(仅管理及群主可用)
 或者 #addw 游戏ID"""
 
 
-@on_command('addw', aliases='加白名单', only_to_me=False)
+@on_command('addw', aliases='加白名单', only_to_me=False, permission=permission.GROUP_OWNER | permission.GROUP_ADMIN)
 async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']  # 取发送者的qq号
     SenderGamerName = session.current_arg_text.strip()  # 去空格取命令参数
