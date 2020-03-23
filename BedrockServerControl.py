@@ -33,7 +33,6 @@ def OutputInfo():
         elif re.search('Running AutoCompaction', Info):
             pass
         elif Info == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
-            print('清空特殊返回值')
             OtherCommandReturn = ''
         elif InputCommand == 'list' or InputCommand == 'listd':
             print('收到特殊指令:', InputCommand)
@@ -66,6 +65,8 @@ def RestartServer():
 
 # ws部分
 async def ExecCommand(websocket: object, path: object) -> object:
+    ServerRun.stdin.write(' ' + '\n')
+    ServerRun.stdin.flush()
     while True:
         global InputCommand
         Command = await websocket.recv()
@@ -74,18 +75,20 @@ async def ExecCommand(websocket: object, path: object) -> object:
         time.sleep(0.1)
         ServerRun.stdin.write(Command + '\n')
         ServerRun.stdin.flush()
-        time.sleep(0.1)
-        if InputCommand == 'list':
-            time.sleep(1.5)
-            await websocket.send(OtherCommandReturn)
-        elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
-            print('Success')
-            await websocket.send('Success')
-        elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
-            print('Success')
-            await websocket.send('Success')
-        else:
-            await websocket.send(SendInfo)
+        time.sleep(0.2)
+        try:
+            if InputCommand == 'list':
+                time.sleep(1.5)
+                await websocket.send(OtherCommandReturn)
+            elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+                print('Success')
+                await websocket.send('Success')
+            elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
+                pass
+            else:
+                await websocket.send(SendInfo)
+        except:
+            pass
         ServerRun.stdin.write('' + '\n')
         ServerRun.stdin.flush()
 
