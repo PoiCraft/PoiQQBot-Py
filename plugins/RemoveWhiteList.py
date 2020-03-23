@@ -1,7 +1,6 @@
 import time
 
 from websocket import create_connection
-import Test.test as sc
 from nonebot import on_command, CommandSession, permission
 
 __plugin_name__ = '删除白名单'
