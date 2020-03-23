@@ -82,5 +82,8 @@ class Player:
     def __int__(self):
         return int(self.__qq)
 
+    def __repr__(self):
+        return 'Player<qq=%s,id=%s>'%(self.__qq,self.__id)
+
 
 
