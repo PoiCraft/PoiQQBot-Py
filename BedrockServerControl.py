@@ -30,11 +30,10 @@ def OutputInfo():
         if Info == '' and (InputCommand not in SpecialCommand):
             print('服务器异常结束，即将重启')
             RestartServer()
+        elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+            OtherCommandReturn = ''
         elif re.search('Running AutoCompaction', Info):
             pass
-        elif Info == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
-            print('清空特殊返回值')
-            OtherCommandReturn = ''
         elif InputCommand == 'list' or InputCommand == 'listd':
             print('收到特殊指令:', InputCommand)
             OtherCommandReturn += Info + '\n'
@@ -66,6 +65,8 @@ def RestartServer():
 
 # ws部分
 async def ExecCommand(websocket: object, path: object) -> object:
+    ServerRun.stdin.write('' + '\n')
+    ServerRun.stdin.flush()
     while True:
         global InputCommand
         Command = await websocket.recv()
@@ -74,12 +75,12 @@ async def ExecCommand(websocket: object, path: object) -> object:
         time.sleep(0.1)
         ServerRun.stdin.write(Command + '\n')
         ServerRun.stdin.flush()
-        time.sleep(0.1)
+        time.sleep(0.3)
         if InputCommand == 'list':
             time.sleep(1.5)
             await websocket.send(OtherCommandReturn)
         elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
-            print('Success')
+            print('判空')
             await websocket.send('Success')
         elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
             print('Success')
@@ -93,6 +94,3 @@ async def ExecCommand(websocket: object, path: object) -> object:
 StartWsServer = websockets.serve(ExecCommand, '127.0.0.1', 30000)
 asyncio.get_event_loop().run_until_complete(StartWsServer)
 asyncio.get_event_loop().run_forever()
-time.sleep(6)
-ServerRun.stdin.write('' + '\n')
-ServerRun.stdin.flush()
