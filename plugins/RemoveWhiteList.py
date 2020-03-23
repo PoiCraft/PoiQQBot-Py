@@ -10,7 +10,7 @@ __plugin_usage__ = r"""删白名单(仅管理及群主可用)
 或者 #rmw 游戏ID"""
 
 
-@on_command('rmw', aliases='删白名单', only_to_me=False, permission=permission.GROUP_ADMIN | permission.GROUP_OWNER)
+@on_command('rmw', aliases='删白名单', only_to_me=False)
 async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']  # 取发送者的qq号
     SenderGamerName = session.current_arg_text.strip()  # 去空格取命令参数
@@ -22,13 +22,9 @@ async def Bind(session: CommandSession):
         except:
             await session.send('[CQ:at,qq={0}] 服务器去火星了,等会儿再试试吧'.format(SenderQQNumber))
         ws.send(('whitelist remove %s' % SenderGamerName))
-        time.sleep(0.2)
+        time.sleep(0.6)
         result = ws.recv()
-        if result == 'Success':
-            result = ws.recv()
-            await session.send(result)  # 没啥用,多获取一次,一个奇怪的bug
+        if result == "Player removed from whitelist":
+            await session.send('[CQ:at,qq=%s] %s已经从Poicraft的白名单中消失了呢!' % (SenderQQNumber, SenderGamerName))
         else:
-            if result == "Player removed from whitelist":
-                await session.send('[CQ:at,qq=%s] %s已经从Poicraft的白名单中消失了呢!' % (SenderQQNumber, SenderGamerName))
-            else:
-                await session.send('[CQ:at,qq=%s] Poicraft的白名单并找不到%s呢!' % (SenderQQNumber, SenderGamerName))
+            await session.send('[CQ:at,qq=%s] Poicraft的白名单并找不到%s呢!' % (SenderQQNumber, SenderGamerName))
