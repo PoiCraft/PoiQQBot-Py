@@ -32,8 +32,6 @@ def OutputInfo():
             RestartServer()
         elif re.search('Running AutoCompaction', Info):
             pass
-        elif Info == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
-            OtherCommandReturn = ''
         elif InputCommand == 'list' or InputCommand == 'listd':
             print('收到特殊指令:', InputCommand)
             OtherCommandReturn += Info + '\n'
@@ -65,7 +63,7 @@ def RestartServer():
 
 # ws部分
 async def ExecCommand(websocket: object, path: object) -> object:
-    ServerRun.stdin.write(' ' + '\n')
+    ServerRun.stdin.write('' + '\n')
     ServerRun.stdin.flush()
     while True:
         global InputCommand
@@ -75,20 +73,19 @@ async def ExecCommand(websocket: object, path: object) -> object:
         time.sleep(0.1)
         ServerRun.stdin.write(Command + '\n')
         ServerRun.stdin.flush()
-        time.sleep(0.2)
-        try:
-            if InputCommand == 'list':
-                time.sleep(1.5)
-                await websocket.send(OtherCommandReturn)
-            elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
-                print('Success')
-                await websocket.send('Success')
-            elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
-                pass
-            else:
-                await websocket.send(SendInfo)
-        except:
-            pass
+        time.sleep(0.6)
+        if InputCommand == 'list':
+            time.sleep(1.5)
+            await websocket.send(OtherCommandReturn)
+        elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+            print('判空')
+            OtherCommandReturn = ''
+            await websocket.send('Success')
+        elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
+            print('Success')
+            await websocket.send('Success')
+        else:
+            await websocket.send(SendInfo)
         ServerRun.stdin.write('' + '\n')
         ServerRun.stdin.flush()
 
@@ -96,6 +93,3 @@ async def ExecCommand(websocket: object, path: object) -> object:
 StartWsServer = websockets.serve(ExecCommand, '127.0.0.1', 30000)
 asyncio.get_event_loop().run_until_complete(StartWsServer)
 asyncio.get_event_loop().run_forever()
-time.sleep(6)
-ServerRun.stdin.write('' + '\n')
-ServerRun.stdin.flush()
