@@ -30,6 +30,8 @@ def OutputInfo():
         if Info == '' and (InputCommand not in SpecialCommand):
             print('服务器异常结束，即将重启')
             RestartServer()
+        elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
+            OtherCommandReturn = ''
         elif re.search('Running AutoCompaction', Info):
             pass
         elif InputCommand == 'list' or InputCommand == 'listd':
@@ -73,13 +75,12 @@ async def ExecCommand(websocket: object, path: object) -> object:
         time.sleep(0.1)
         ServerRun.stdin.write(Command + '\n')
         ServerRun.stdin.flush()
-        time.sleep(0.6)
+        time.sleep(0.3)
         if InputCommand == 'list':
             time.sleep(1.5)
             await websocket.send(OtherCommandReturn)
         elif SendInfo == 'Unknown command: . Please check that the command exists and that you have permission to use it.':
             print('判空')
-            OtherCommandReturn = ''
             await websocket.send('Success')
         elif re.search('^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} INFO].+', SendInfo):
             print('Success')
