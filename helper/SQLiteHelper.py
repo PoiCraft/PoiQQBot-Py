@@ -13,27 +13,40 @@ class Player:
             self.msg = msg
         def __str__(self):
             return self.msg
-    class MissingParameterException(Error):
-        "参数缺失"
+    class ParameterException(Error):
+        "参数异常"
         pass
-    class TooManyPlayersException(Error):
-        "出现相同账号"
+    class TheSameQQException(Error):
+        "出现相同QQ"
+        pass
+    class TheSameIDException(Error):
+        "出现相同ID"
         pass
     class PlayerNotFoundException(Error):
         "玩家不存在"
         pass
+    class ToMuchTpException(Error):
+        "TP 次数过多"
+    pass
+
+    __c = 0
 
     def __add(self):
-        cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName) VALUES (\'%s\', \'%s\')' %(self.__qq, self.__id))
+        cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName ,UseNumber) VALUES (\'%s\', \'%s\',0)' %(self.__qq, self.__id))
         db.commit()
 
     def __get(self,key,value):
         cursor.execute('select * from GameToQQData where %s=\'%s\''%(key,value))
-        self.__result = cursor.fetchall()
+        return cursor.fetchall()
 
     def __del(self,key,value):
         cursor.execute('delete from GameToQQData where %s=\'%s\''%(key,value))
         db.commit()
+
+    def __limit_tp(self,i):
+        cursor.execute(f'update GameToQQData set UseNumber = {i} where QQNumber = \'{self.__qq}\'')
+        db.commit()
+        self.__init__(self.__qq)
 
     def __list():
         cursor.execute('select * from GameToQQData')
@@ -41,23 +54,27 @@ class Player:
 
     def __init__(self,QQNumber:str=None,GamerName:str=None):
         if (QQNumber == None and GamerName == None):
-            raise self.MissingParameterException("请提供 QQ 号或 Xbox ID 中的至少一个参数")
+            raise self.ParameterException("请提供 QQ 号或 Xbox ID 中的至少一个参数")
         self.__qq = QQNumber
         self.__id = GamerName
-        if (self.__qq is not None):
-            self.__get("QQNumber",self.__qq)
+        if None not in (self.__qq,self.__id):
+            r_qq = self.__get('QQNumber',self.__qq)
+            r_id = self.__get('GamerName',self.__id)
+            if not len(r_qq) == 0:
+                raise self.TheSameQQException('此QQ已被绑定')
+            if not len(r_id) == 0:
+                raise self.TheSameIDException('此ID已被绑定')
+            self.__add()
         else:
-            self.__get("GamerName",self.__id)
-        if (self.__qq and self.__id):
-            if len(self.__result) == 0:
-                self.__add()
+            if not self.__qq == None:
+                r = self.__get('QQNumber',self.__qq)
             else:
-                raise self.TooManyPlayersException('此QQ已被绑定过了')
-        elif len(self.__result) == 1:
-            self.__qq = self.__result[0][0]
-            self.__id = self.__result[0][1]
-        else:
-            raise self.PlayerNotFoundException('无法找到此玩家')
+                r = self.__get('GamerName',self.__id)
+            if len(r)==0:
+                raise self.PlayerNotFoundException('找不到此玩家')
+            self.__qq = r[0][0]
+            self.__id = r[0][1]
+            self.__c  = int(r[0][2])
 
     def remove(self):
         if (self.__qq is not None):
@@ -76,11 +93,28 @@ class Player:
     def GamerName(self):
         return self.__id
 
+    def cleanTpCount(self):
+        self.__limit_tp(0)
+
+    def addTpCount(self,t_max=3):
+        if self.__c < t_max:
+            self.__limit_tp(self.__c + 1)
+            return self.__c
+        else:
+            raise self.ToMuchTpException("过多的TP")
+
+
+    def TpCount(self):
+        return self.__c
+
     def __str__(self):
         return self.__id
 
     def __int__(self):
         return int(self.__qq)
+
+    def __repr__(self):
+        return 'Player<qq=%s,id=%s,tp=%s>'%(self.__qq,self.__id,self.__c)
 
 
 
