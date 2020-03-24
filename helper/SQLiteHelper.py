@@ -105,6 +105,7 @@ class Player:
 
 
     def TpCount(self):
+        self.__init__(self.__qq)
         return self.__c
 
     def __str__(self):
@@ -114,6 +115,7 @@ class Player:
         return int(self.__qq)
 
     def __repr__(self):
+        self.__init__(self.__qq)
         return 'Player<qq=%s,id=%s,tp=%s>'%(self.__qq,self.__id,self.__c)
 
 
