@@ -48,10 +48,6 @@ class Player:
         db.commit()
         self.__init__(self.__qq)
 
-    def __list():
-        cursor.execute('select * from GameToQQData')
-        return cursor.fetchall()
-
     def __init__(self,QQNumber:str=None,GamerName:str=None):
         if (QQNumber == None and GamerName == None):
             raise self.ParameterException("请提供 QQ 号或 Xbox ID 中的至少一个参数")
@@ -85,7 +81,7 @@ class Player:
     def list():
         cursor.execute('select * from GameToQQData')
         palyers = cursor.fetchall()
-        return [{'qq':v[0],'id':v[1]} for v in palyers]
+        return [{'qq':v[0],'id':v[1],'tp':v[2]} for v in palyers]
 
     def QQNumber(self):
         return self.__qq
@@ -96,6 +92,10 @@ class Player:
     def cleanTpCount(self):
         self.__limit_tp(0)
 
+    def cleanAllTpCount():
+        cursor.execute('update GameToQQData set UseNumber = 0')
+        db.commit()
+
     def addTpCount(self,t_max=3):
         if self.__c < t_max:
             self.__limit_tp(self.__c + 1)
@@ -105,6 +105,7 @@ class Player:
 
 
     def TpCount(self):
+        self.__init__(self.__qq)
         return self.__c
 
     def __str__(self):
@@ -114,6 +115,7 @@ class Player:
         return int(self.__qq)
 
     def __repr__(self):
+        self.__init__(self.__qq)
         return 'Player<qq=%s,id=%s,tp=%s>'%(self.__qq,self.__id,self.__c)
 
 
