@@ -24,7 +24,7 @@ async def RandomTp(session: CommandSession):
     try:
         GamerName = Player('%s' % SenderQQNumber)  ##QQ取玩家ID
     except Player.PlayerNotFoundException:
-        await session.send('[CQ:at,qq={0}]你没有绑定，请输入/addw 你的游戏ID，例：/addw blueworldsmile进行绑定'.format(SenderQQNumber))
+        await session.send('[CQ:at,qq={0}]你没有绑定，请输入#bind 你的游戏ID，例：#addw username进行绑定'.format(SenderQQNumber))
         exit()
     # 联系BedrockServer处理
     try:
@@ -44,6 +44,6 @@ async def RandomTp(session: CommandSession):
             print("给予玩家%s防摔死buff*15s" % GamerName)
             time.sleep(0.3)
             ws.send('tp %s %s 120 %s' % (GamerName, x, z))
-            await session.send(f'[CQ:at,qq={SenderQQNumber}] 您已被传送至{x},100,{z} 使用次数:{player.TpCount()}/{config.RandomTp}')
+            await session.send(f'[CQ:at,qq={SenderQQNumber}] 您已被传送至{x},100,{z}\n使用次数:{player.TpCount()}/{config.RandomTp}\n传送本不易，且行且珍惜')
     else:
         await session.send('[CQ:at,qq={0}] 当前您不在线嗷,上线后再试试吧'.format(SenderQQNumber))
