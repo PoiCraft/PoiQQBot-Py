@@ -4,15 +4,15 @@ from nonebot import on_command, CommandSession
 from websocket import create_connection
 from helper.SQLiteHelper import Player
 
-__plugin_name__ = '随机传送'
-__plugin_usage__ = r"""随机传送
-例：#随机传送
+__plugin_name__ = '单人随机传送'
+__plugin_usage__ = r"""单人随机传送
+例：#传送
 或者 #rtp"""
 
 import config
 
 
-@on_command('rtp', aliases='随机传送', only_to_me=False)
+@on_command('rtp', aliases='传送', only_to_me=False)
 async def RandomTp(session: CommandSession):
     # 查数据库
     # 定义一些东西...
