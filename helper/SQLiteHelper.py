@@ -16,18 +16,18 @@ class Player:
     class ParameterException(Error):
         "参数异常"
         pass
-    class TheSameQQException(Error):
+    class UsedQQException(Error):
         "出现相同QQ"
         pass
-    class TheSameIDException(Error):
+    class UsedIDException(Error):
         "出现相同ID"
         pass
     class PlayerNotFoundException(Error):
         "玩家不存在"
         pass
-    class ToMuchTpException(Error):
+    class TooMuchTpException(Error):
         "TP 次数过多"
-    pass
+        pass
 
     __c = 0
 
@@ -57,9 +57,9 @@ class Player:
             r_qq = self.__get('QQNumber',self.__qq)
             r_id = self.__get('GamerName',self.__id)
             if not len(r_qq) == 0:
-                raise self.TheSameQQException('此QQ已被绑定')
+                raise self.UsedQQException('此QQ已被绑定')
             if not len(r_id) == 0:
-                raise self.TheSameIDException('此ID已被绑定')
+                raise self.UsedIDException('此ID已被绑定')
             self.__add()
         else:
             if not self.__qq == None:
@@ -101,7 +101,7 @@ class Player:
             self.__limit_tp(self.__c + 1)
             return self.__c
         else:
-            raise self.ToMuchTpException("过多的TP")
+            raise self.TooMuchTpException("过多的TP")
 
 
     def TpCount(self):

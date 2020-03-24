@@ -37,7 +37,7 @@ async def RandomTp(session: CommandSession):
         player = Player(SenderQQNumber)
         try:
             player.addTpCount()
-        except Player.ToMuchTpException:
+        except Player.TooMuchTpException:
             await session.send('[CQ:at,qq={0}] 今日随机传送次数已用完,且行且珍惜'.format(SenderQQNumber))
         else:
             ws.send('effect %s resistance 15 5 true' % GamerName)
