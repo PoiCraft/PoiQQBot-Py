@@ -7,7 +7,7 @@ from nonebot import on_command, CommandSession,permission
 __plugin_name__ = '解除绑定'
 __plugin_usage__ = r"""解除绑定(仅管理及群主可用)
 例：#解绑 @一个人
-或者 #unbind 艾特一个人"""
+或 #unbind 艾特一个人"""
 
 
 @on_command('unbind', aliases='解绑', only_to_me=False, permission=permission.GROUP_OWNER | permission.GROUP_ADMIN)

@@ -13,7 +13,7 @@ async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']  # 取发送者的qq号
     SenderGamerName = session.current_arg_text.strip()  # 去空格取命令参数
     if not SenderGamerName:
-        await session.send('#bind后面必须跟上你的用户名嗷，例：/bind HelloWorld')
+        await session.send('#bind后面必须跟上你的用户名嗷，例：#bind HelloWorld')
     else:
         try:
             Player(SenderQQNumber, SenderGamerName)
