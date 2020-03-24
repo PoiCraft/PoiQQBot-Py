@@ -10,7 +10,7 @@ __plugin_usage__ = r"""解除绑定(仅管理及群主可用)
 或者 #unbind 艾特一个人"""
 
 
-@on_command('unbind', aliases='解绑', only_to_me=False, only_to_me=False, permission=permission.GROUP_OWNER | permission.GROUP_ADMIN)
+@on_command('unbind', aliases='解绑', only_to_me=False, permission=permission.GROUP_OWNER | permission.GROUP_ADMIN)
 async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']
     SenderAtQQNumber = session.ctx['message']
@@ -19,7 +19,7 @@ async def Bind(session: CommandSession):
         try:
             SqlGamerName = Player(QQNumber=AtQQNumber).GamerName()
             Player(AtQQNumber).remove()
-            await session.send(f'[CQ:at,qq={SenderQQNumber}] 成功解除{AtQQNumber}与{SqlGamerName}的绑定!!!')
+            await session.send(f'[CQ:at,qq={SenderQQNumber}] 解除{AtQQNumber}与{SqlGamerName}的绑定!!!')
         except Player.PlayerNotFoundException:
             await session.send(f'[CQ:at,qq={SenderQQNumber}] 该用户没有绑定呢!!!')
     except:
