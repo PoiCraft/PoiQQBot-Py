@@ -2,7 +2,7 @@ import random
 import time
 from nonebot import on_command, CommandSession
 from websocket import create_connection
-from helper.SQLiteHelper import Player
+from helper.DatabaseHelper import Player
 
 __plugin_name__ = '随机传送'
 __plugin_usage__ = r"""随机传送

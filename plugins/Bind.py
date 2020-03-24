@@ -1,5 +1,5 @@
 from nonebot import on_command, CommandSession
-from helper.SQLiteHelper import Player
+from helper.DatabaseHelper import Player
 
 __plugin_name__ = '绑定游戏数据库'
 __plugin_usage__ = r"""添加白名单

@@ -1,7 +1,3 @@
-import sqlite3
-import config
+from helper.DatabaseHelper import Player
 
-sql = 'update GameToQQData set UseNumber = 0'
-conn=sqlite3.connect(config.DATABASE)
-conn.execute(sql)
-conn.commit()
+Player.cleanAllTpCount()
