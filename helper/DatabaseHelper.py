@@ -1,5 +1,6 @@
 import mysql.connector
 import config
+import json
 
 db = mysql.connector.connect(
         host=config.DB_HOST,
@@ -84,7 +85,7 @@ class Player:
     def list():
         cursor.execute('select * from GameToQQData')
         palyers = cursor.fetchall()
-        return [{'qq':v[0],'id':v[1],'tp':v[2]} for v in palyers]
+        return [Player(v[0]) for v in palyers]
 
     def QQNumber(self):
         return self.__qq
@@ -122,4 +123,101 @@ class Player:
         return 'Player<qq=%s,id=%s,tp=%s>'%(self.__qq,self.__id,self.__c)
 
 
+class Team:
+
+    class Error(Exception):
+        def __init__(self,msg):
+            self.msg = msg
+        def __str__(self):
+            return self.msg
+    class UsedTeamNameException(Error):
+        "队伍名称已被占用"
+        pass
+    class TeamNotFoundException(Error):
+        "找不到此队伍"
+        pass
+    class AddedMemberException(Error):
+        "已加入的玩家"
+        pass
+    class MemberNotFoundException(Error):
+        "队伍中找不到玩家"
+        pass
+
+    def __add(self):
+        cursor.execute('INSERT INTO TpTeam (TeamName,TeamOwner,TeamMember) VALUES (\'%s\', \'%s\',\'[]\')' %(self.__name, self.__owner))
+        db.commit()
+
+    def __get(self):
+        cursor.execute('select * from TpTeam where TeamName = \'%s\''%self.__name)
+        return cursor.fetchall()
+
+    def __setMember(self,member):
+        cursor.execute(f'update TpTeam set TeamMember =\'{json.dumps(member)}\' where TeamName = \'{self.__name}\'')
+        db.commit()
+
+    def __init__(self,TeamName:str,Owner:Player=None):
+        self.__name = TeamName
+        team = self.__get()
+        if Owner:
+            if len(team) > 0:
+                raise self.UsedTeamNameException()
+            self.__owner = Owner.QQNumber()
+            self.__add()
+        elif len(team) == 0:
+            raise self.TeamNotFoundException()
+        else:
+            self.__owner = team[0][1]
+    
+    def getMember(self):
+        team = self.__get()[0]
+        member = [Player(i) for v in json.loads(team[2])]
+        return member
+
+    def getOwner(self):
+        owner= Player(self.__owner)
+        return owner
+
+    def getOwnerAndMember(self):
+        team = self.__get()[0]
+        member = [Player(i) for v in json.loads(team[2])] + [Player(team[1])]
+        return member
+
+    def addMember(self,player:Player):
+        team = self.__get()[0]
+        if (not player.QQNumber() in json.loads(team[2])) or player.QQNumber() == self.__owner:
+            member = json.loads(team[2])
+            member.append(player.QQNumber())
+            print(member)
+            self.__setMember(member)
+        else:
+            raise self.AddedMemberException()
+
+    def removeMember(self,player:Player):
+        team = self.__get()[0]
+        m = json.loads(team[2])
+        try:
+            m.remove(player.QQNumber())
+        except:
+            raise self.MemberNotFoundException()
+        self.__setMember(m)
+
+    def ifIn(self,player:Player):
+        m = self.getOwnerAndMember()
+        return player.QQNumber() in [i.QQNumber() for i in m]
+
+    def remove(self):
+        cursor.execute('delete from TpTeam where TeamName = \'%s\''%self.__name)
+        db.commit()
+
+
+    def list():
+        cursor.execute('select * from TpTeam')
+        m = cursor.fetchall()
+        return [Team(v[0]) for v in m]
+
+    def __str__(self):
+        return self.__name
+
+    def __repr__(self):
+        return f'Team<name={self.__name},owner={self.__owner}>'
 
