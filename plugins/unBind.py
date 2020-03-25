@@ -10,7 +10,7 @@ __plugin_usage__ = r"""解除绑定(仅管理及群主可用)
 或 #unbind 艾特一个人"""
 
 
-@on_command('unbind', aliases='解绑', only_to_me=False, permission=permission.GROUP_OWNER | permission.GROUP_ADMIN)
+@on_command('unbind', aliases='解绑', only_to_me=False, permission=permission.SUPERUSER | permission.GROUP_OWNER | permission.GROUP_ADMIN)
 async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']
     SenderAtQQNumber = session.ctx['message']

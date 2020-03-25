@@ -75,7 +75,6 @@ class Player:
             self.__qq = r[0][0]
             self.__id = r[0][1]
             self.__c  = int(r[0][2])
-
     def remove(self):
         if (self.__qq is not None):
             self.__del("QQNumber",self.__qq)
