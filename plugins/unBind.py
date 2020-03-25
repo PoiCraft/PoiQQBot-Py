@@ -1,7 +1,7 @@
 import re
 import time
 
-from helper.SQLiteHelper import Player
+from helper.DatabaseHelper import Player
 from nonebot import on_command, CommandSession,permission
 
 __plugin_name__ = '解除绑定'

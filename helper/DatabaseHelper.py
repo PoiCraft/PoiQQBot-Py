@@ -1,8 +1,12 @@
-import sqlite3
-
+import mysql.connector
 import config
 
-db = sqlite3.Connection(config.DATABASE)
+db = mysql.connector.connect(
+        host=config.DB_HOST,
+        user=config.DB_USER,
+        passwd=config.DB_PASS,
+        database=config.DB_NAME
+        )
 cursor = db.cursor()
 
 class Player:
@@ -32,7 +36,7 @@ class Player:
     __c = 0
 
     def __add(self):
-        cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName ,UseNumber) VALUES (\'%s\', \'%s\',0)' %(self.__qq, self.__id))
+        cursor.execute('INSERT INTO GameToQQData (QQNumber, GamerName ,TpNumber) VALUES (\'%s\', \'%s\',0)' %(self.__qq, self.__id))
         db.commit()
 
     def __get(self,key,value):
@@ -44,7 +48,7 @@ class Player:
         db.commit()
 
     def __limit_tp(self,i):
-        cursor.execute(f'update GameToQQData set UseNumber = {i} where QQNumber = \'{self.__qq}\'')
+        cursor.execute(f'update GameToQQData set TpNumber = {i} where QQNumber = \'{self.__qq}\'')
         db.commit()
         self.__init__(self.__qq)
 
@@ -92,7 +96,7 @@ class Player:
         self.__limit_tp(0)
 
     def cleanAllTpCount():
-        cursor.execute('update GameToQQData set UseNumber = 0')
+        cursor.execute('update GameToQQData set TpNumber = 0')
         db.commit()
 
     def addTpCount(self,t_max=3):
