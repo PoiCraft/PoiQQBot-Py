@@ -31,7 +31,7 @@ async def RandomTp(session: CommandSession):
         ws = create_connection("ws://127.0.0.1:30000")
     except:
         await session.send('[CQ:at,qq={0}] 服务器去火星了,等会儿再试试吧'.format(SenderQQNumber))
-    ws.send('testfor %s' % GamerName)
+    ws.send('testfor \"%s\"' % GamerName)
     result = ws.recv()
     if result != 'No targets matched selector':
         player = Player(SenderQQNumber)
@@ -40,10 +40,10 @@ async def RandomTp(session: CommandSession):
         except Player.TooMuchTpException:
             await session.send('[CQ:at,qq={0}] 今日随机传送次数已用完,且行且珍惜'.format(SenderQQNumber))
         else:
-            ws.send('effect %s resistance 15 5 true' % GamerName)
+            ws.send('effect \"%s\" resistance 15 5 true' % GamerName)
             print("给予玩家%s防摔死buff*15s" % GamerName)
             time.sleep(0.3)
-            ws.send('tp %s %s 120 %s' % (GamerName, x, z))
+            ws.send('tp \"%s\" %s 120 %s' % (GamerName, x, z))
             await session.send(f'[CQ:at,qq={SenderQQNumber}] 您已被传送至{x},100,{z}\n使用次数:{player.TpCount()}/{config.RandomTp}\n传送本不易，且行且珍惜')
     else:
         await session.send('[CQ:at,qq={0}] 当前您不在线嗷,上线后再试试吧'.format(SenderQQNumber))
