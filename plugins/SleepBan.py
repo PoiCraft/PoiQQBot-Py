@@ -14,7 +14,7 @@ bot = nonebot.get_bot()
 async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']
     SenderGroupNumber = session.ctx['group_id']
-    if SenderGroupNumber in config.SendGroup:
+    if str(SenderGroupNumber) in config.SendGroup:
         pass
     else:
         await bot.set_group_ban(group_id='769885907', user_id=f'{SenderQQNumber}', duration=6 * 60 * 60)

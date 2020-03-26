@@ -18,7 +18,7 @@ async def RandomTp(session: CommandSession):
     z = random.randint(30000, 70000) * -1  # 随机Z轴
     SenderQQNumber = session.ctx['user_id']
     SenderGroupNumber = session.ctx['group_id']
-    if SenderGroupNumber in config.SendGroup:
+    if str(SenderGroupNumber) in config.SendGroup:
         pass
     else:
     # 联系数据库获取到玩家名称

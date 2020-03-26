@@ -14,7 +14,7 @@ async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']
     SenderAtQQNumber = session.ctx['message']
     SenderGroupNumber = session.ctx['group_id']
-    if SenderGroupNumber in config.SendGroup:
+    if str(SenderGroupNumber) in config.SendGroup:
         pass
     else:
         try:

@@ -14,7 +14,7 @@ async def Bind(session: CommandSession):
     time.sleep(2)
     SenderQQNumber = session.ctx['user_id']
     SenderGroupNumber = session.ctx['group_id']
-    if SenderGroupNumber in config.SendGroup:
+    if str(SenderGroupNumber) in config.SendGroup:
         pass
     else:
         CpuCoreInfoList = psutil.cpu_percent(1, True)

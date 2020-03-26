@@ -13,7 +13,7 @@ __plugin_usage__ = r"""帮助
 async def _(session: CommandSession):
     # 获取设置了名称的插件列表
     SenderGroupNumber = session.ctx['group_id']
-    if SenderGroupNumber in config.SendGroup:
+    if str(SenderGroupNumber) in config.SendGroup:
         pass
     else:
         plugins = list(filter(lambda p: p.name, nonebot.get_loaded_plugins()))

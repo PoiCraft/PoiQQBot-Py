@@ -9,14 +9,14 @@ __plugin_usage__ = r"""一言
 或者 #yy"""
 
 
-@on_command('learn', aliases='学习', only_to_me=False, permission=permission.GROUP)
+@on_command('yy', aliases='一言', only_to_me=False, permission=permission.GROUP)
 async def Bind(session: CommandSession):
     SenderQQNumber = session.ctx['user_id']
     SenderGroupNumber = session.ctx['group_id']
-    if SenderGroupNumber in config.SendGroup:
+    if str(SenderGroupNumber) not in config.SendGroup:
         pass
     else:
         Return = requests.get('https://v1.hitokoto.cn/?c=a')
-        JsonStr = json.loads(Return.text)
-        await session.send('[CQ:at,qq=%s]%s\nFrom:%s' % (SenderQQNumber, JsonStr['hitokoto'], JsonStr['from']))
+        Json = json.loads(Return.text)
+        await session.send('[CQ:at,qq=%s]%s\nFrom:%s' % (SenderQQNumber, Json['hitokoto'], Json['from']))
 
