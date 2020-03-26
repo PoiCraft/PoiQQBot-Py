@@ -170,7 +170,7 @@ class Team:
     
     def getMember(self):
         team = self.__get()[0]
-        member = [Player(i) for v in json.loads(team[2])]
+        member = [Player(v) for v in json.loads(team[2])]
         return member
 
     def getOwner(self):
@@ -179,7 +179,7 @@ class Team:
 
     def getOwnerAndMember(self):
         team = self.__get()[0]
-        member = [Player(i) for v in json.loads(team[2])] + [Player(team[1])]
+        member = [Player(v) for v in json.loads(team[2])] + [Player(team[1])]
         return member
 
     def addMember(self,player:Player):
