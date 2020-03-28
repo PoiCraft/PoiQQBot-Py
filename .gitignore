@@ -4,3 +4,4 @@ Scripts
 config.py
 *.pyc
 *.db
+.idea/
