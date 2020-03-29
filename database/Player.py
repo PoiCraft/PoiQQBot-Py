@@ -8,4 +8,4 @@ class Player(Base):
     __tablename__ = 'GameToQQData'
     QQNumber = Column(Integer,primary_key=True)
     GamerName = Column(Text)
-    TpNumber = Column(Text)
+    TpNumber = Column(Integer)
